@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicação interativa 3D para estudo de Geometria Molecular. Visualize geometrias Linear, Trigonal Planar, Tetraédrica, Pirâmide Trigonal e Angular com modelos moleculares 3D interativos.">
+    <title>Molecular Geometry Lab — Introdução à Geometria Molecular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.164.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Header
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="app-header" class="app-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon" aria-hidden="true">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="12" r="5.5" fill="#2563EB" opacity="0.92"/>
+                        <circle cx="7" cy="24" r="3.8" fill="#B71C1C" opacity="0.82"/>
+                        <circle cx="25" cy="24" r="3.8" fill="#B71C1C" opacity="0.82"/>
+                        <line x1="13" y1="16" x2="9" y2="21.5" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"/>
+                        <line x1="19" y1="16" x2="23" y2="21.5" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Molecular Geometry Lab</h1>
+                    <p class="brand-subtitle">Introdução à Geometria Molecular</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Main Content
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app-main" class="app-main">
+
+        <!-- ── Control Panel (Sidebar) ──────────────────────────────── -->
+        <aside id="control-panel" class="control-panel">
+
+            <!-- Geometry Selector -->
+            <section class="panel-section">
+                <h2 class="section-title">Geometria</h2>
+                <div id="geometry-selector" class="geometry-selector" role="radiogroup" aria-label="Seletor de geometria molecular"></div>
+            </section>
+
+            <!-- Molecule Selector -->
+            <section class="panel-section">
+                <h2 class="section-title">Molécula</h2>
+                <div id="molecule-selector" class="molecule-selector" role="radiogroup" aria-label="Seletor de molécula"></div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- Visualization Toggles -->
+            <section class="panel-section">
+                <h2 class="section-title">Visualização</h2>
+                <div class="toggle-group">
+                    <label class="toggle-row" for="toggle-electron-cloud">
+                        <span class="toggle-text">Nuvem Eletrônica</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="toggle-electron-cloud" aria-label="Ativar nuvem eletrônica">
+                            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                        </div>
+                    </label>
+                    <label class="toggle-row" for="toggle-labels">
+                        <span class="toggle-text">Anotações</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="toggle-labels" aria-label="Ativar anotações">
+                            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                        </div>
+                    </label>
+                    <label class="toggle-row" for="toggle-lone-pairs">
+                        <span class="toggle-text">Pares Isolados</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="toggle-lone-pairs" aria-label="Mostrar pares de elétrons isolados">
+                            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- Molecule Information Card -->
+            <section class="panel-section">
+                <h2 class="section-title">Informações</h2>
+                <div id="info-card" class="info-card">
+                    <div id="info-name" class="info-molecule-name">—</div>
+                    <div id="info-formula-display" class="info-formula-display">—</div>
+                    <div class="info-grid">
+                        <div class="info-cell">
+                            <span class="info-cell-label">Geometria</span>
+                            <span id="info-geometry" class="info-cell-value">—</span>
+                        </div>
+                        <div class="info-cell">
+                            <span class="info-cell-label">Ângulo</span>
+                            <span id="info-angle" class="info-cell-value">—</span>
+                        </div>
+                        <div class="info-cell">
+                            <span class="info-cell-label">Ligações</span>
+                            <span id="info-bonds" class="info-cell-value">—</span>
+                        </div>
+                        <div class="info-cell">
+                            <span class="info-cell-label">Pares Isolados</span>
+                            <span id="info-lone-pairs" class="info-cell-value">—</span>
+                        </div>
+                    </div>
+                    <p id="info-description" class="info-description"></p>
+                </div>
+            </section>
+        </aside>
+
+        <!-- ── 3D Viewport ──────────────────────────────────────────── -->
+        <section id="viewport" class="viewport" aria-label="Visualização 3D da molécula">
+            <canvas id="three-canvas"></canvas>
+            <!-- Instruction overlay -->
+            <div id="viewport-hint" class="viewport-hint">
+                <span>Arraste para rotacionar · Scroll para zoom</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Footer
+         ═══════════════════════════════════════════════════════════════ -->
+    <footer id="app-footer" class="app-footer">
+        <p>Desenvolvido por <a href="https://github.com/carlosguedes-dev" target="_blank" rel="noopener noreferrer">Carlos Guedes</a></p>
+    </footer>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
