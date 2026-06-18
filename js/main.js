@@ -1,13 +1,15 @@
 /**
- * @fileoverview Application entry point.
+ * @fileoverview Application entry point v3.
  *
- * Orchestrates the SceneManager (Three.js), MoleculeBuilder (3-D objects),
- * and UIController (DOM events) into a cohesive interactive experience.
+ * Orchestrates: cinematic loading → intro overlay → main app with
+ * tab switching (Explore / Build), mobile sidebar toggle, and
+ * the full render loop.
  */
 
 import { SceneManager }    from './sceneManager.js';
 import { MoleculeBuilder } from './moleculeBuilder.js';
 import { UIController }    from './uiController.js';
+import { CustomBuilder }   from './customBuilder.js';
 import { GEOMETRIES, MOLECULES } from './moleculeData.js';
 
 
@@ -17,42 +19,155 @@ export class MolecularGeometryApp {
         this.sceneManager    = new SceneManager('viewport');
         this.moleculeBuilder = new MoleculeBuilder(this.sceneManager);
         this.uiController    = new UIController(this);
+        this.customBuilder   = new CustomBuilder(this.sceneManager, this.moleculeBuilder);
 
-        // Current state
+        // State
         this.currentGeometry = null;
         this.currentMolecule = null;
         this.showCloud       = false;
         this.showLabels      = false;
         this.showLonePairs   = false;
+        this.activeTab       = 'explore';  // 'explore' | 'build'
 
-        // RAF handle
         this._rafId = null;
     }
 
     /* ═══════════════════════════════════════════════════════════════════
-       Bootstrap
+       Bootstrap — Loading → Intro → App
        ═══════════════════════════════════════════════════════════════════ */
 
-    init() {
+    start() {
+        // Init 3D scene + UI (behind loading screen)
         this.sceneManager.init();
         this.uiController.init();
+        this.customBuilder.init();
 
         // Default selection
         this.selectGeometry('linear');
 
-        // Start render loop
+        // Start render loop immediately (for smooth transition)
         this._animate();
+
+        // Loading screen → intro → app
+        this._runLoadingSequence();
+
+        // Tab switching
+        this._bindTabs();
+
+        // Mobile panel toggle
+        this._bindMobilePanel();
+    }
+
+    /* ─── Cinematic loading sequence ───────────────────────────────── */
+
+    _runLoadingSequence() {
+        const loading  = document.getElementById('loading-screen');
+        const intro    = document.getElementById('intro-overlay');
+        const wrapper  = document.getElementById('app-wrapper');
+        const startBtn = document.getElementById('intro-start-btn');
+
+        // After loading bar completes (~3.5s), transition to app
+        setTimeout(() => {
+            loading.classList.add('fade-out');
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                wrapper.classList.add('visible');
+
+                // Show intro after app is visible
+                setTimeout(() => {
+                    intro.style.display = '';
+                }, 300);
+            }, 800);
+        }, 3500);
+
+        // "Começar" button dismisses intro
+        startBtn.addEventListener('click', () => {
+            intro.classList.add('fade-out');
+            setTimeout(() => {
+                intro.style.display = 'none';
+            }, 400);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Tab Switching
+       ═══════════════════════════════════════════════════════════════════ */
+
+    _bindTabs() {
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                if (tab === this.activeTab) return;
+                this.activeTab = tab;
+
+                // Update tab button states
+                document.querySelectorAll('.tab-btn').forEach((b) => {
+                    const active = b.dataset.tab === tab;
+                    b.classList.toggle('active', active);
+                    b.setAttribute('aria-selected', String(active));
+                });
+
+                // Show/hide panels
+                const explorePanel = document.getElementById('panel-explore');
+                const buildPanel   = document.getElementById('panel-build');
+
+                if (tab === 'explore') {
+                    explorePanel.style.display = '';
+                    buildPanel.style.display   = 'none';
+                    this.customBuilder.deactivate();
+
+                    // Rebuild current molecule
+                    if (this.currentMolecule && MOLECULES[this.currentMolecule]) {
+                        this.moleculeBuilder.build(MOLECULES[this.currentMolecule], {
+                            showCloud: this.showCloud,
+                            showLabels: this.showLabels,
+                            showLonePairs: this.showLonePairs,
+                        });
+                        this.sceneManager.triggerEntrance();
+                    }
+                } else {
+                    explorePanel.style.display = 'none';
+                    buildPanel.style.display   = '';
+                    this.customBuilder.activate();
+                }
+            });
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Mobile Panel
+       ═══════════════════════════════════════════════════════════════════ */
+
+    _bindMobilePanel() {
+        const toggle  = document.getElementById('mobile-panel-toggle');
+        const panel   = document.getElementById('control-panel');
+        const main    = document.getElementById('app-main');
+
+        // Create backdrop element
+        const backdrop = document.createElement('div');
+        backdrop.className = 'panel-backdrop';
+        main.appendChild(backdrop);
+
+        let isOpen = false;
+        const open  = () => { isOpen = true;  panel.classList.add('open');  backdrop.classList.add('visible'); };
+        const close = () => { isOpen = false; panel.classList.remove('open'); backdrop.classList.remove('visible'); };
+
+        toggle.addEventListener('click', () => isOpen ? close() : open());
+        backdrop.addEventListener('click', close);
+
+        // Close panel when a molecule/geometry is selected (mobile UX)
+        panel.addEventListener('click', (e) => {
+            if (e.target.closest('.geometry-btn') || e.target.closest('.molecule-btn')) {
+                setTimeout(close, 150);
+            }
+        });
     }
 
     /* ═══════════════════════════════════════════════════════════════════
        Selection Handlers
        ═══════════════════════════════════════════════════════════════════ */
 
-    /**
-     * Select a geometry type — updates the molecule list and selects
-     * the first molecule of that geometry.
-     * @param {string} geometryKey
-     */
     selectGeometry(geometryKey) {
         if (this.currentGeometry === geometryKey) return;
         this.currentGeometry = geometryKey;
@@ -60,36 +175,26 @@ export class MolecularGeometryApp {
         this.uiController.setActiveGeometry(geometryKey);
         this.uiController.populateMolecules(geometryKey);
 
-        // Auto-select first molecule
         const firstMol = GEOMETRIES[geometryKey].molecules[0];
         this.selectMolecule(firstMol);
     }
 
-    /**
-     * Select a specific molecule — rebuilds the 3-D model and updates UI.
-     * @param {string} moleculeKey
-     */
     selectMolecule(moleculeKey) {
         if (!MOLECULES[moleculeKey]) return;
         this.currentMolecule = moleculeKey;
 
-        // Reset toggles
-        this.showCloud    = false;
-        this.showLabels   = false;
+        this.showCloud     = false;
+        this.showLabels    = false;
         this.showLonePairs = false;
         this.uiController.resetToggles();
 
-        // Build 3-D model
         this.moleculeBuilder.build(MOLECULES[moleculeKey], {
             showCloud:    this.showCloud,
             showLabels:   this.showLabels,
             showLonePairs: this.showLonePairs,
         });
 
-        // Entrance animation
         this.sceneManager.triggerEntrance();
-
-        // Update UI
         this.uiController.setActiveMolecule(moleculeKey);
         this.uiController.updateInfoCard(moleculeKey);
     }
@@ -106,7 +211,6 @@ export class MolecularGeometryApp {
     toggleLabels(enabled) {
         this.showLabels = enabled;
         this.moleculeBuilder.setLabelsVisible(enabled);
-        // LP labels also need refreshing
         this.moleculeBuilder.setLonePairsVisible(this.showLonePairs);
     }
 
@@ -128,4 +232,4 @@ export class MolecularGeometryApp {
 
 /* ── Instantiate & run ─────────────────────────────────────────────── */
 const app = new MolecularGeometryApp();
-app.init();
+app.start();

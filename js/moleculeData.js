@@ -12,14 +12,14 @@ const D = 1.5; // Standard bond visualization length (arbitrary units)
 
 // ─── Element Rendering Properties ─────────────────────────────────────
 export const ELEMENTS = Object.freeze({
-    H:  { color: 0xB0BEC5, radius: 0.28, name: 'Hidrogênio', symbol: 'H'  },
+    H:  { color: 0xF06292, radius: 0.28, name: 'Hidrogênio', symbol: 'H'  },
     C:  { color: 0x37474F, radius: 0.44, name: 'Carbono',     symbol: 'C'  },
     N:  { color: 0x0D47A1, radius: 0.42, name: 'Nitrogênio',  symbol: 'N'  },
     O:  { color: 0xB71C1C, radius: 0.40, name: 'Oxigênio',    symbol: 'O'  },
     F:  { color: 0x2E7D32, radius: 0.34, name: 'Flúor',       symbol: 'F'  },
     Cl: { color: 0x1B5E20, radius: 0.52, name: 'Cloro',       symbol: 'Cl' },
     S:  { color: 0xF57F17, radius: 0.52, name: 'Enxofre',     symbol: 'S'  },
-    Be: { color: 0x689F38, radius: 0.48, name: 'Berílio',     symbol: 'Be' },
+    Be: { color: 0xFFA726, radius: 0.48, name: 'Berílio',     symbol: 'Be' },
     B:  { color: 0xE65100, radius: 0.44, name: 'Boro',        symbol: 'B'  },
     Si: { color: 0x795548, radius: 0.54, name: 'Silício',     symbol: 'Si' },
     P:  { color: 0xFF6F00, radius: 0.50, name: 'Fósforo',     symbol: 'P'  },

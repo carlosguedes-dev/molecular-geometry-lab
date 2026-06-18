@@ -36,80 +36,7 @@ function getSphereGeo(radius) {
 
 const _cylGeo = new THREE.CylinderGeometry(1, 1, 1, 20, 1);
 
-// ─── Atom Texture Generation (sculpted element symbols) ───────────────
-const _atomTextureCache = new Map();
 
-/**
- * Generates a color map and bump map canvas texture for an atom sphere,
- * drawing the element symbol "engraved" onto the surface.
- */
-function getAtomTextures(element) {
-    if (_atomTextureCache.has(element)) return _atomTextureCache.get(element);
-
-    const el = ELEMENTS[element];
-    const baseColor = new THREE.Color(el.color);
-    const SIZE = 512;
-
-    // ── Color Map: base color + lighter symbol text ──────────────────
-    const colorCanvas = document.createElement('canvas');
-    colorCanvas.width = SIZE;
-    colorCanvas.height = SIZE;
-    const cCtx = colorCanvas.getContext('2d');
-
-    cCtx.fillStyle = `#${baseColor.getHexString()}`;
-    cCtx.fillRect(0, 0, SIZE, SIZE);
-
-    // Symbol in a lighter, slightly desaturated shade
-    const lighter = baseColor.clone();
-    lighter.offsetHSL(0, -0.05, 0.18);
-
-    const fontSize = el.symbol.length > 1 ? 155 : 195;
-    cCtx.font = `700 ${fontSize}px Arial, Helvetica, sans-serif`;
-    cCtx.textAlign = 'center';
-    cCtx.textBaseline = 'middle';
-
-    // Subtle inner shadow for depth
-    cCtx.shadowColor = 'rgba(0,0,0,0.30)';
-    cCtx.shadowBlur = 6;
-    cCtx.shadowOffsetX = 1;
-    cCtx.shadowOffsetY = 2;
-    cCtx.fillStyle = `#${lighter.getHexString()}`;
-    cCtx.fillText(el.symbol, SIZE / 2, SIZE / 2);
-
-    // Bright highlight pass (simulates top-light reflection on the engraving)
-    cCtx.shadowColor = 'rgba(255,255,255,0.15)';
-    cCtx.shadowBlur = 3;
-    cCtx.shadowOffsetX = -1;
-    cCtx.shadowOffsetY = -1;
-    const highlight = baseColor.clone();
-    highlight.offsetHSL(0, -0.08, 0.28);
-    cCtx.fillStyle = `#${highlight.getHexString()}`;
-    cCtx.fillText(el.symbol, SIZE / 2, SIZE / 2);
-
-    const colorTexture = new THREE.CanvasTexture(colorCanvas);
-    colorTexture.colorSpace = THREE.SRGBColorSpace;
-
-    // ── Bump Map: neutral gray base + white symbol for relief ────────
-    const bumpCanvas = document.createElement('canvas');
-    bumpCanvas.width = SIZE;
-    bumpCanvas.height = SIZE;
-    const bCtx = bumpCanvas.getContext('2d');
-
-    bCtx.fillStyle = '#808080';
-    bCtx.fillRect(0, 0, SIZE, SIZE);
-
-    bCtx.fillStyle = '#b0b0b0';
-    bCtx.font = `700 ${fontSize}px Arial, Helvetica, sans-serif`;
-    bCtx.textAlign = 'center';
-    bCtx.textBaseline = 'middle';
-    bCtx.fillText(el.symbol, SIZE / 2, SIZE / 2);
-
-    const bumpTexture = new THREE.CanvasTexture(bumpCanvas);
-
-    const result = { colorMap: colorTexture, bumpMap: bumpTexture };
-    _atomTextureCache.set(element, result);
-    return result;
-}
 
 
 export class MoleculeBuilder {
@@ -209,17 +136,25 @@ export class MoleculeBuilder {
     _createAtom(atom, group) {
         const el  = ELEMENTS[atom.element];
         const geo = getSphereGeo(el.radius);
-        const tex = getAtomTextures(atom.element);
         const mat = new THREE.MeshStandardMaterial({
-            map:       tex.colorMap,
-            bumpMap:   tex.bumpMap,
-            bumpScale: 0.022,
+            color:     el.color,
             metalness: 0.30,
             roughness: 0.16,
         });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.set(...atom.position);
         group.add(mesh);
+
+        // Element symbol as CSS2D label (always crisp, resolution-independent)
+        const c   = new THREE.Color(el.color);
+        const lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+        const div = document.createElement('div');
+        div.className = 'atom-symbol-label';
+        div.textContent = el.symbol;
+        div.dataset.lum = lum > 0.45 ? 'light' : 'dark';
+        const lbl = new CSS2DObject(div);
+        lbl.position.set(...atom.position);
+        group.add(lbl);
     }
 
     /* ═══════════════════════════════════════════════════════════════════
@@ -227,21 +162,25 @@ export class MoleculeBuilder {
        ═══════════════════════════════════════════════════════════════════ */
 
     _createBond(atomA, atomB, order, group) {
-        const pA = new THREE.Vector3(...atomA.position);
-        const pB = new THREE.Vector3(...atomB.position);
+        const pA  = new THREE.Vector3(...atomA.position);
+        const pB  = new THREE.Vector3(...atomB.position);
+        const dir = new THREE.Vector3().subVectors(pB, pA).normalize();
+        const rA  = ELEMENTS[atomA.element].radius;
+        const rB  = ELEMENTS[atomB.element].radius;
+
+        // Trim: bonds start/end at atom surfaces (not centers)
+        const trimA = pA.clone().addScaledVector(dir,  rA * 0.55);
+        const trimB = pB.clone().addScaledVector(dir, -rB * 0.55);
 
         if (order === 1) {
-            this._makeBondCylinder(pA, pB, BOND_RADIUS, group);
+            this._makeBondCylinder(trimA, trimB, BOND_RADIUS, group);
         } else if (order === 2) {
-            // Two parallel cylinders offset perpendicular to the bond
-            const dir = new THREE.Vector3().subVectors(pB, pA).normalize();
             const perp = this._perpendicular(dir).multiplyScalar(DOUBLE_BOND_OFFSET);
-
             for (const sign of [1, -1]) {
                 const off = perp.clone().multiplyScalar(sign);
                 this._makeBondCylinder(
-                    pA.clone().add(off),
-                    pB.clone().add(off),
+                    trimA.clone().add(off),
+                    trimB.clone().add(off),
                     BOND_RADIUS_DOUBLE,
                     group,
                 );
