@@ -766,6 +766,49 @@ body {
     font-style: italic; font-weight: 500;
 }
 
+/* ─── Atom Symbol Labels (CSS2DObject, always crisp) ───────────────────── */
+/*
+ * These are HTML elements positioned by CSS2DRenderer at the atom's 3D
+ * projected coordinates. Because they are DOM text, they are always
+ * sub-pixel sharp regardless of zoom or DPR.
+ */
+.atom-symbol-label {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+
+    /* Centre the element exactly on the projected 3D point */
+    transform: translate(-50%, -50%);
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+
+    /* No box, no background — pure text on top of the sphere */
+    text-shadow:
+        0 1px 3px rgba(0,0,0,0.35),
+        0 0 6px rgba(0,0,0,0.15);
+}
+
+/* Light atoms (H, Be, S, P…) → dark text */
+.atom-symbol-label[data-lum="light"] {
+    color: rgba(15, 23, 42, 0.82);
+    text-shadow:
+        0 1px 2px rgba(255,255,255,0.6),
+        0 0 4px rgba(255,255,255,0.3);
+}
+
+/* Dark atoms (C, N, O, F, Cl, B…) → white text */
+.atom-symbol-label[data-lum="dark"] {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow:
+        0 1px 3px rgba(0,0,0,0.4),
+        0 0 8px rgba(0,0,0,0.2);
+}
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════
    FOOTER
