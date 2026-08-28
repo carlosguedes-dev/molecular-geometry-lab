@@ -24,7 +24,6 @@ const ARC_SEGMENTS       = 48;
 const ARC_RADIUS         = 0.55;
 const SPHERE_SEGMENTS    = 48;
 
-// Shared geometries (pooled to reduce GC)
 const _sphereGeoCache = new Map();
 function getSphereGeo(radius) {
     const key = radius.toFixed(3);
@@ -65,15 +64,12 @@ export class MoleculeBuilder {
         this.clear();
         const group = this.sm.moleculeGroup;
 
-        // 1) Atoms
         mol.atoms.forEach((atom) => this._createAtom(atom, group));
 
-        // 2) Bonds
         mol.bonds.forEach((bond) => {
             this._createBond(mol.atoms[bond.from], mol.atoms[bond.to], bond.order, group);
         });
 
-        // 3) Electron clouds (initially hidden unless requested)
         mol.atoms.forEach((atom) => this._createElectronCloud(atom, group));
 
         // 4) Bond electron clouds
@@ -89,7 +85,6 @@ export class MoleculeBuilder {
             });
         }
 
-        // 6) Labels (annotations)
         this._createAnnotations(mol, group);
 
         // Apply initial toggle states
@@ -145,7 +140,6 @@ export class MoleculeBuilder {
         mesh.position.set(...atom.position);
         group.add(mesh);
 
-        // Element symbol as CSS2D label (always crisp, resolution-independent)
         const c   = new THREE.Color(el.color);
         const lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
         const div = document.createElement('div');
@@ -168,7 +162,6 @@ export class MoleculeBuilder {
         const rA  = ELEMENTS[atomA.element].radius;
         const rB  = ELEMENTS[atomB.element].radius;
 
-        // Trim: bonds start/end at atom surfaces (not centers)
         const trimA = pA.clone().addScaledVector(dir,  rA * 0.55);
         const trimB = pB.clone().addScaledVector(dir, -rB * 0.55);
 
@@ -203,7 +196,6 @@ export class MoleculeBuilder {
             }),
         );
 
-        // Scale unit cylinder (radius 1, height 1)
         mesh.scale.set(radius, len, radius);
 
         // Position at midpoint
@@ -303,7 +295,6 @@ export class MoleculeBuilder {
         });
         const mesh = new THREE.Mesh(geo, mat);
 
-        // Elongated ellipsoid
         mesh.scale.set(0.65, 1.25, 0.65);
 
         // Position along direction from central atom
@@ -432,7 +423,6 @@ export class MoleculeBuilder {
             points = this._buildArc(center, dirA, dirB, ARC_RADIUS);
         }
 
-        // Line geometry
         const geo  = new THREE.BufferGeometry().setFromPoints(points);
         const mat  = new THREE.LineBasicMaterial({ color: ARC_COLOR, linewidth: 1 });
         const line = new THREE.Line(geo, mat);

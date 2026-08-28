@@ -21,7 +21,6 @@ export class UIController {
     constructor(app) {
         this.app = app;
 
-        // DOM references (cached once)
         this._geoContainer  = document.getElementById('geometry-selector');
         this._molContainer  = document.getElementById('molecule-selector');
         this._infoName      = document.getElementById('info-name');

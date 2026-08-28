@@ -17,7 +17,6 @@ export class SceneManager {
         this.viewportEl = document.getElementById(viewportId);
         this.canvasEl   = document.getElementById('three-canvas');
 
-        // Core Three.js objects (initialized in init())
         this.scene         = null;
         this.camera        = null;
         this.renderer      = null;
@@ -31,7 +30,6 @@ export class SceneManager {
         this._targetScale = 1;
         this._animating   = false;
 
-        // Auto-rotation
         this._autoRotate       = true;
         this._autoRotateSpeed  = 0.003;
         this._resumeTimeout    = null;
@@ -241,7 +239,6 @@ export class SceneManager {
     /* ─────────────────────── render (per-frame) ──────────────────────── */
 
     render() {
-        // Orbit damping
         this.controls.update();
 
         // Entrance scale animation
@@ -256,7 +253,6 @@ export class SceneManager {
             }
         }
 
-        // Gentle auto-rotation
         if (this._autoRotate && this.moleculeGroup) {
             this.moleculeGroup.rotation.y += this._autoRotateSpeed;
         }

@@ -87,14 +87,12 @@ export class CustomBuilder {
         this.sm = sm;
         this.mb = mb;  // Reuse MoleculeBuilder for rendering
 
-        // Selection state
         this.selectedGeometry = 'linear';
         this.centralElement   = 'C';
         this.ligandElement    = 'H';
 
         this._active = false;
 
-        // DOM references
         this._geoSelector     = document.getElementById('build-geometry-selector');
         this._centralPalette  = document.getElementById('build-central-palette');
         this._ligandPalette   = document.getElementById('build-ligand-palette');
@@ -214,7 +212,6 @@ export class CustomBuilder {
         const geoInfo   = GEOMETRIES[this.selectedGeometry];
         const positions = config.positions();
 
-        // Atoms
         const atoms = [
             { element: this.centralElement, position: [0, 0, 0], role: 'central' },
             ...positions.map((pos) => ({
@@ -224,14 +221,12 @@ export class CustomBuilder {
             })),
         ];
 
-        // Bonds (all single order from central to each ligand)
         const bonds = positions.map((_, i) => ({
             from: 0,
             to: i + 1,
             order: 1,
         }));
 
-        // Formula
         const formula = this._computeFormula(config.ligandCount);
 
         return {

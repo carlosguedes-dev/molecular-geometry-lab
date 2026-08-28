@@ -21,7 +21,6 @@ export class MolecularGeometryApp {
         this.uiController    = new UIController(this);
         this.customBuilder   = new CustomBuilder(this.sceneManager, this.moleculeBuilder);
 
-        // State
         this.currentGeometry = null;
         this.currentMolecule = null;
         this.showCloud       = false;
@@ -37,21 +36,17 @@ export class MolecularGeometryApp {
        ═══════════════════════════════════════════════════════════════════ */
 
     start() {
-        // Init 3D scene + UI (behind loading screen)
         this.sceneManager.init();
         this.uiController.init();
         this.customBuilder.init();
 
-        // Default selection
         this.selectGeometry('linear');
 
-        // Start render loop immediately (for smooth transition)
         this._animate();
 
         // Loading screen → intro → app
         this._runLoadingSequence();
 
-        // Tab switching
         this._bindTabs();
 
         // Mobile panel toggle
@@ -66,7 +61,6 @@ export class MolecularGeometryApp {
         const wrapper  = document.getElementById('app-wrapper');
         const startBtn = document.getElementById('intro-start-btn');
 
-        // After loading bar completes (~3.5s), transition to app
         setTimeout(() => {
             loading.classList.add('fade-out');
 
@@ -108,7 +102,6 @@ export class MolecularGeometryApp {
                     b.setAttribute('aria-selected', String(active));
                 });
 
-                // Show/hide panels
                 const explorePanel = document.getElementById('panel-explore');
                 const buildPanel   = document.getElementById('panel-build');
 
@@ -156,7 +149,6 @@ export class MolecularGeometryApp {
         toggle.addEventListener('click', () => isOpen ? close() : open());
         backdrop.addEventListener('click', close);
 
-        // Close panel when a molecule/geometry is selected (mobile UX)
         panel.addEventListener('click', (e) => {
             if (e.target.closest('.geometry-btn') || e.target.closest('.molecule-btn')) {
                 setTimeout(close, 150);

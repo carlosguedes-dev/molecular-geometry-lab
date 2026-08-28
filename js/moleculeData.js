@@ -64,7 +64,6 @@ export const GEOMETRIES = Object.freeze({
     },
 });
 
-// ─── Geometry Order (for UI rendering) ────────────────────────────────
 export const GEOMETRY_ORDER = [
     'linear',
     'trigonalPlanar',
@@ -78,10 +77,8 @@ const cos = (deg) => Math.cos((deg * Math.PI) / 180);
 const sin = (deg) => Math.sin((deg * Math.PI) / 180);
 const sqrt = Math.sqrt;
 
-// Trigonal planar positions (xz-plane)
 const TP = (i) => [D * cos(i * 120), 0, D * sin(i * 120)];
 
-// Tetrahedral positions
 const TA = D / sqrt(3); // ≈ 0.866
 
 // Trigonal pyramidal helper: given bond angle θ, compute ligand positions
@@ -96,7 +93,6 @@ function trigPyrLigands(bondAngle) {
     ]);
 }
 
-// Angular (bent) helper: given bond angle θ, compute two ligand positions
 function angularLigands(bondAngle) {
     const half = bondAngle / 2;
     return [
@@ -105,7 +101,6 @@ function angularLigands(bondAngle) {
     ];
 }
 
-// Pre-compute sets
 const NH3_LIGS  = trigPyrLigands(107);
 const PCl3_LIGS = trigPyrLigands(100.1);
 const NF3_LIGS  = trigPyrLigands(102.2);

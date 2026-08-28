@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧪 Molecular Geometry Lab (Laboratório 3D de Geometria Molecular) ⚛️✨
+#  Molecular Geometry Lab (Laboratório 3D de Geometria Molecular) 
 
 **Uma plataforma web interativa, imersiva e de alta precisão 3D para o estudo avançado das estruturas fundamentais da geometria molecular!**
 
@@ -10,11 +10,11 @@
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/pt-BR/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
 [![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
-[![Feito com Amor](https://img.shields.io/badge/Feito_com-MUITO_AMOR_❤️-ff0055?style=for-the-badge)](https://github.com)
+[![Feito com Amor](https://img.shields.io/badge/Feito_com-MUITO_AMOR_-ff0055?style=for-the-badge)](https://github.com)
 
 ---
 
-🔗 **[Acessar o Projeto Ao Vivo / Demonstração Online](https://carlosguedes-dev.github.io/molecular-geometry-lab/)**
+ **[Acessar o Projeto Ao Vivo / Demonstração Online](https://carlosguedes-dev.github.io/molecular-geometry-lab/)**
 
 <p align="center">
   <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1200&auto=format&fit=crop" alt="Banner Geometria Molecular 3D" width="80%" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 210, 255, 0.4);">
@@ -24,7 +24,7 @@
 
 ---
 
-## 📖 Sobre o Projeto
+##  Sobre o Projeto
 
 O **Molecular Geometry Lab** é uma aplicação web interativa de ponta (*Ultra-Premium 3D Experience & Luxury Dark Mode*) desenvolvida para revolucionar o aprendizado e a visualização de estruturas moleculares. Combinando rigor científico e um design moderno com tecnologia **Three.js**, a plataforma transforma conceitos abstratos de química valencial em modelos espaciais táteis e visualmente impressionantes.
 
@@ -34,18 +34,18 @@ Além da exploração passiva, o laboratório capacita estudantes, professores e
 
 ---
 
-## ✨ Principais Funcionalidades
+##  Principais Funcionalidades
 
-- 🔬 **Modo Explorar 3D Interativo**: Navegação orbital de alta precisão por 15 moléculas reais preconfiguradas. Rotacione livremente o viewport em qualquer ângulo e aproxime ou afaste a visualização via zoom dinâmico.
-- 🛠️ **Modo Construir em Tempo Real**: Monte suas próprias estruturas moleculares do zero! Escolha a geometria e adicione átomos ligantes ao núcleo central, acompanhando a redefinição espacial do modelo instantaneamente.
-- ⚡ **Análise Visual & Nuvens Eletrônicas**: Camadas de sobreposição (*overlays*) didáticas que permitem visualizar representações de nuvens eletrônicas, pares de elétrons não-ligantes (isolados) e anotações de ângulos de ligação.
-- 💎 **Aestética Glassmorphism Luxury**: Interface desenvolvida com efeitos de vidro fosco (`backdrop-filter: blur`), tipografia moderna, transições suaves e uma tela de carregamento cinematográfica em paleta Dark Mode.
-- 📐 **Fidelidade à Teoria VSEPR**: Modelagem estrutural programada para respeitar fielmente a repulsão eletrônica, facilitando a compreensão intuitiva da geometria espacial química.
-- 📱 **Totalmente Responsivo & Otimizado**: Controles touch adaptados para tablets e smartphones, garantindo performance fluida a 60 FPS em qualquer tela.
+-  **Modo Explorar 3D Interativo**: Navegação orbital de alta precisão por 15 moléculas reais preconfiguradas. Rotacione livremente o viewport em qualquer ângulo e aproxime ou afaste a visualização via zoom dinâmico.
+-  **Modo Construir em Tempo Real**: Monte suas próprias estruturas moleculares do zero! Escolha a geometria e adicione átomos ligantes ao núcleo central, acompanhando a redefinição espacial do modelo instantaneamente.
+-  **Análise Visual & Nuvens Eletrônicas**: Camadas de sobreposição (*overlays*) didáticas que permitem visualizar representações de nuvens eletrônicas, pares de elétrons não-ligantes (isolados) e anotações de ângulos de ligação.
+-  **Aestética Glassmorphism Luxury**: Interface desenvolvida com efeitos de vidro fosco (`backdrop-filter: blur`), tipografia moderna, transições suaves e uma tela de carregamento cinematográfica em paleta Dark Mode.
+-  **Fidelidade à Teoria VSEPR**: Modelagem estrutural programada para respeitar fielmente a repulsão eletrônica, facilitando a compreensão intuitiva da geometria espacial química.
+-  **Totalmente Responsivo & Otimizado**: Controles touch adaptados para tablets e smartphones, garantindo performance fluida a 60 FPS em qualquer tela.
 
 ---
 
-## 💻 Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 Este projeto foi desenvolvido com uma arquitetura focada em máximo desempenho gráfico, modularidade e zero dependências de frameworks de UI pesados:
 
@@ -56,7 +56,7 @@ Este projeto foi desenvolvido com uma arquitetura focada em máximo desempenho g
 
 ---
 
-## 📁 Estrutura de Arquivos
+##  Estrutura de Arquivos
 
 ```text
 molecular-geometry-lab/
@@ -78,7 +78,7 @@ molecular-geometry-lab/
 
 ---
 
-## 🚀 Como Executar o Projeto
+##  Como Executar o Projeto
 
 Você pode rodar e testar o laboratório diretamente em seu ambiente local sem necessidade de configurações complexas:
 
@@ -99,19 +99,19 @@ Você pode rodar e testar o laboratório diretamente em seu ambiente local sem n
 
 ---
 
-## 🤝 Como Contribuir
+##  Como Contribuir
 
 Contribuições são extremamente bem-vindas para enriquecer ainda mais este laboratório educacional! Se você deseja adicionar novas moléculas, aprimorar shaders 3D ou traduzir a interface, confira nosso guia detalhado em [CONTRIBUTING.md](CONTRIBUTING.md) para saber como participar do desenvolvimento.
 
 ---
 
-## 📄 Licença
+##  Licença
 
 Este projeto está devidamente protegido e distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para obter mais informações sobre direitos de uso, modificação e distribuição.
 
 ---
 
 <div align="center">
-  <p>Feito com todo o carinho, dedicação e engenharia de precisão por <a href="https://github.com/carlosguedes-dev"><b>Carlos Guedes</b></a> ❤️</p>
-  <p><b>Transformando ciência e código em experiências digitais inesquecíveis! 🚀✨</b></p>
+  <p>Feito com todo o carinho, dedicação e engenharia de precisão por <a href="https://github.com/carlosguedes-dev"><b>Carlos Guedes</b></a> </p>
+  <p><b>Transformando ciência e código em experiências digitais inesquecíveis! </b></p>
 </div>
